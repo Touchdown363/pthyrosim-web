@@ -269,14 +269,14 @@ public class Thyrosim implements FirstOrderDifferentialEquations
         double refH_F  = p[78];                  // p[79]
 
         // Compute reference Vp (average of male/female reference)
-        //double refVp = (referenceVp(refBMI, true, refH_M) + referenceVp(refBMI, false, refH_F)) / 2.0;
+        double refVp = (referenceVp(refBMI, true, refH_M) + referenceVp(refBMI, false, refH_F)) / 2.0;
 
         // Patient Vp
         double patientVp = predictVp(height, weight, sex);
 
         // Scaled Vp (normalised to 3.2 L reference)
-        // double Vp_new = patientVp * 3.2 / refVp;
-        double Vp_new = patientVp;
+        double Vp_new = patientVp * 3.2 / refVp;
+        //double Vp_new = patientVp;
 
 
         // Vtsh = 5.2 + Vtsh_scale * (Vp_new - 3.2)
@@ -284,7 +284,7 @@ public class Thyrosim implements FirstOrderDifferentialEquations
         double Vtsh_new = 5.2 + (Vp_new - 3.2);  // p[67]
 
         // Plasma volume ratio for ODE scaling
-        //double Vp_ratio = patientVp / refVp;
+        double Vp_ratio = patientVp / refVp;
 
         // k05: scale by male clearance factor if male
         double k05_base = 0.184972339613;  // p[29] base (female)
@@ -293,7 +293,7 @@ public class Thyrosim implements FirstOrderDifferentialEquations
         // Write back
         p[46] = Vp_new;    // p[47]
         p[47] = Vtsh_new;  // p[48]
-        // p[68] = Vp_ratio;  // p[69]
+        p[68] = Vp_ratio;  // p[69]
         p[28] = k05_new;   // p[29]
     }
 
