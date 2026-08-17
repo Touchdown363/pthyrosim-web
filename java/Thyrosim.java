@@ -99,15 +99,18 @@ public class Thyrosim implements FirstOrderDifferentialEquations
         double NL = p(13) / (p(14) + q2);
 
         // ODEs (compartment indices are 0-based; Julia q[1] → java q[0])
-        dq[0]  = p(81) + (SR4 + p(3)*q2 + p(4)*q3 - (p(5)+p(6))*q1F) * plasma_volume_ratio
+        //dq[0]  = p(81) + (SR4 + p(3)*q2 + p(4)*q3 - (p(5)+p(6))*q1F) * plasma_volume_ratio
+        dq[0]  = p(81) + (SR4 + p(3)*q2 + p(4)*q3 - (p(5)+p(6))*q1F)
                        + p(11) * q[10];                               // T4 plasma
         dq[1]  = p(6)*q1F - (p(3) + p(12) + NL) * q2;               // T4 fast
         dq[2]  = p(5)*q1F - (p(4) + p(15)/(p(16)+q3) + p(17)/(p(18)+q3)) * q3; // T4 slow
-        dq[3]  = p(82) + (SR3 + p(20)*q5 + p(21)*q6 - (p(22)+p(23))*q4F) * plasma_volume_ratio
+        //dq[3]  = p(82) + (SR3 + p(20)*q5 + p(21)*q6 - (p(22)+p(23))*q4F) * plasma_volume_ratio
+        dq[3]  = p(82) + (SR3 + p(20)*q5 + p(21)*q6 - (p(22)+p(23))*q4F)
                        + p(28) * q[12];                               // T3 plasma
         dq[4]  = p(23)*q4F + NL*q2 - (p(20) + p(29)) * q5;          // T3 fast
         dq[5]  = p(22)*q4F + p(15)*q3/(p(16)+q3) + p(17)*q3/(p(18)+q3) - p(21)*q6; // T3 slow
-        dq[6]  = (SRTSH - fdegTSH * q7) * plasma_volume_ratio;       // TSH plasma
+        //dq[6]  = (SRTSH - fdegTSH * q7) * plasma_volume_ratio;       // TSH plasma
+        dq[6]  = (SRTSH - fdegTSH * q7);       // TSH plasma
         dq[7]  = f4/p(38)*q1 + p(37)/p(39)*q4 - p(40)*q[7];         // T3B
         dq[8]  = fLAG * (q[7] - q[8]);                               // T3B LAG
         dq[9]  = -p(43) * q[9];                                       // T4 PILL
@@ -266,19 +269,22 @@ public class Thyrosim implements FirstOrderDifferentialEquations
         double refH_F  = p[78];                  // p[79]
 
         // Compute reference Vp (average of male/female reference)
-        double refVp = (referenceVp(refBMI, true, refH_M) + referenceVp(refBMI, false, refH_F)) / 2.0;
+        //double refVp = (referenceVp(refBMI, true, refH_M) + referenceVp(refBMI, false, refH_F)) / 2.0;
 
         // Patient Vp
         double patientVp = predictVp(height, weight, sex);
 
         // Scaled Vp (normalised to 3.2 L reference)
-        double Vp_new = patientVp * 3.2 / refVp;
+        // double Vp_new = patientVp * 3.2 / refVp;
+        double Vp_new = patientVp;
+
 
         // Vtsh = 5.2 + Vtsh_scale * (Vp_new - 3.2)
-        double Vtsh_new = 5.2 + p[66] * (Vp_new - 3.2);  // p[67]
+        //double Vtsh_new = 5.2 + p[66] * (Vp_new - 3.2);  // p[67]
+        double Vtsh_new = 5.2 + (Vp_new - 3.2);  // p[67]
 
         // Plasma volume ratio for ODE scaling
-        double Vp_ratio = patientVp / refVp;
+        //double Vp_ratio = patientVp / refVp;
 
         // k05: scale by male clearance factor if male
         double k05_base = 0.184972339613;  // p[29] base (female)
@@ -287,7 +293,7 @@ public class Thyrosim implements FirstOrderDifferentialEquations
         // Write back
         p[46] = Vp_new;    // p[47]
         p[47] = Vtsh_new;  // p[48]
-        p[68] = Vp_ratio;  // p[69]
+        // p[68] = Vp_ratio;  // p[69]
         p[28] = k05_new;   // p[29]
     }
 
@@ -552,8 +558,10 @@ public class Thyrosim implements FirstOrderDifferentialEquations
             double a = p[23], b = p[24], c = p[25], d = p[26]; // p[24..27]
             double ft4_raw = 0.45 * (A + B*q1 + C*q1Sq + D*q1Cu) * q1;
             double ft3_raw = 0.5  * (a + b*q1 + c*q1Sq + d*q1Cu) * q4;
-            FT4arr[i] = 1.1 * 1000.0 * MW_T4 * ft4_raw / Vp;
-            FT3arr[i] = 1.05 * 1000.0 * MW_T3 * ft3_raw / Vp;
+            //FT4arr[i] = 1.1 * 1000.0 * MW_T4 * ft4_raw / Vp;
+            //FT3arr[i] = 1.05 * 1000.0 * MW_T3 * ft3_raw / Vp;
+            FT4arr[i] = 1000.0 * MW_T4 * ft4_raw / Vp;
+            FT3arr[i] = 1000.0 * MW_T3 * ft3_raw / Vp;
 
             // Convert time axis to requested unit
             timeArr[i] = mode.equals("days") ? tHrs / 24.0 : tHrs;
@@ -673,9 +681,11 @@ public class Thyrosim implements FirstOrderDifferentialEquations
         for (double v : y) sb.append(v).append(" ");
 
         // FT4p and FT3p use scaled plasma concentration (q1 = y[0] / Vp_ratio)
-        double Vp_ratio = p[68]; // p[69]; defaults to 1.0 when not personalised
-        double q1   = y[0] / Vp_ratio;
-        double q4   = y[3] / Vp_ratio;
+        //double Vp_ratio = p[68]; // p[69]; defaults to 1.0 when not personalised
+        //double q1   = y[0] / Vp_ratio;
+        double q1   = y[0];
+        // double q4   = y[3] / Vp_ratio;
+        double q4   = y[3];
         double q1sq = q1 * q1, q1cu = q1sq * q1;
         double ft4  = (p[6] + p[7]*q1 + p[8]*q1sq + p[9]*q1cu) * q1;
         double ft3  = (p[23] + p[24]*q1 + p[25]*q1sq + p[26]*q1cu) * q4;
