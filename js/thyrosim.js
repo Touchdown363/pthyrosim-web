@@ -459,7 +459,7 @@ function validateForm() {
 
     // Only iterate over text inputs in the form
     var fail = false;
-    var maxTime = (getTimeDivisor() === 1) ? 2400.0 : 1000.0;
+    var maxTime = (getTimeDivisor() === 1) ? 5760.0 : 1000.0;
     $.each($("form input[type=text]").serializeArray(), function(i, field) {
         if (field.name === 'height' && $('#height-unit').val() === 'ft') {
             var hMeters = convertInFtToMeters($('#height').val(), 'ft');
@@ -1049,7 +1049,7 @@ function updateTimeLabels() {
 
     // Update simulation time tooltip
     if (getTimeDivisor() === 1) {
-        $('#simtime-info').attr('title', 'Simulation Time must be \u2264 2400 hours (100 days).');
+        $('#simtime-info').attr('title', 'Simulation Time must be \u2264 5760 hours (240 days).');
     } else {
         $('#simtime-info').attr('title', 'Simulation Time must be \u2264 1000 days.');
     }
