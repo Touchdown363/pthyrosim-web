@@ -1686,6 +1686,11 @@ function loadParams() {
 //===================================================================
 // DESC:    jQuery $(document).ready() functions.
 //===================================================================
+function bindT3Secretion(c) {
+    $('#dialinput3').val(c); 
+    $('#slider3').slider('value',c);
+}
+
 $(function() {
 
     // Initialize D3 charts
@@ -1708,7 +1713,10 @@ $(function() {
             range:   o.range,
             animate: o.animate,
             // Change dialinput's value to match slider's value
-            slide:   function(event,ui) { $(d).val(ui.value); }
+            slide:   function(event,ui) { 
+                $(d).val(ui.value);
+                if (k === '1') bindT3Secretion(ui.value);
+            }
         });
     $('input[name=unitModeRadio]').change(function() {
         switchUnitMode($(this).val());
@@ -1719,6 +1727,7 @@ $(function() {
         // Changes slider value when changing dialinput
         $(d).keyup(function() {
             $(s).slider('value',this.value);
+            if (k === '1') bindT3Secretion(this.value);
         });
     });
 

@@ -835,10 +835,10 @@ $paramEditor
 
       <!-- Graphs -->
       <div class="textcenter">
-        <div id="FT4graph" class="hide d3chart"></div>
-        <div id="FT3graph" class="hide d3chart"></div>
-        <div id="T4graph"  class="show d3chart"></div>
-        <div id="T3graph"  class="show d3chart"></div>
+        <div id="FT4graph" class="show d3chart"></div>
+        <div id="FT3graph" class="show d3chart"></div>
+        <div id="T4graph"  class="hide d3chart"></div>
+        <div id="T3graph"  class="hide d3chart"></div>
         <div id="TSHgraph" class="show d3chart"></div>
       </div>
       <!-- Graphs end -->
@@ -853,21 +853,22 @@ $paramEditor
           <div class="demographics-inputs">
             <label for="weight">Weight</label>
             <div class="unit-input-row">
-              <input type="number" name="weight" id="weight" class="inputs" min="1" max="500" step="0.1" value="70">
+              <input type="number" name="weight" id="weight" class="inputs" min="0.22" max="1102.31" step="0.1" value="154.32">
               <select id="weight-unit" class="inputs unit-select">
+                <option value="lb" selected>lb</option>
                 <option value="kg">kg</option>
-                <option value="lb">lb</option>
               </select>
             </div>
             <label for="height">Height</label>
             <div class="unit-input-row">
-              <input type="number" name="height" id="height" class="inputs" min="0.1" max="3" step="0.01" value="1.75">
+              <input type="number" name="height" id="height" class="inputs" min="3.94" max="118.11" step="0.01" value="68.90">
               <select id="height-unit" class="inputs unit-select">
-                <option value="m">m</option>
+                <option value="in" selected>in</option>
                 <option value="ft">ft</option>
-                <option value="in">in</option>
+                <option value="m">m</option>
               </select>
             </div>
+
             <label>Sex</label>
             <span class="btn-group">
               <label class="btn btn-teal active">
@@ -1039,7 +1040,7 @@ sub getFooter {
 
         <ol>
           <li>
-            January 2026: Added parameters for patient's sex, weight, and height.
+            November 2026: Added parameters for patient's sex, weight, and height.
           </li>
           <li>
             July 2023: Updated the hormone normal ranges.
@@ -1074,6 +1075,9 @@ sub getFooter {
             Modeling and Analysis by Marisa Eisenberg, Rotem Ben-Shachar & the
             DiStefano Lab Team
           </li>
+          <li>
+            P-THYROSIM Updates by Sean Silver, Jaden Silver, CSM182 '26, & the DiStefano Lab Team
+          </li>
           $jr_ack
         </ol>
 
@@ -1093,7 +1097,7 @@ sub getFooter {
     </a>
     <br>
     Code repository:
-    <a href="https://github.com/Goody64/pthyrosim-web"
+    <a href="https://github.com/Touchdown363/pthyrosim-web"
        target="_blank">click here</a>
   </div>
   <!-- Container (bot) end -->
